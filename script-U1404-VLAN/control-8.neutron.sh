@@ -20,7 +20,7 @@ sysctl -p
 echo "########## CAI DAT NEUTRON TREN $CON_MGNT_IP ##########"
 sleep 5
 
-aptitude -y install neutron-plugin-ml2 neutron-plugin-openvswitch-agent neutron-l3-agent neutron-dhcp-agent
+aptitude -y install neutron-plugin-ml2 neutron-plugin-openvswitch-agent neutron-dhcp-agent
 aptitude -y install neutron-server neutron-plugin-ml2 python-neutronclient
 
 
@@ -96,7 +96,7 @@ mechanism_drivers = openvswitch
 [ml2_type_flat]
 
 [ml2_type_vlan]
-network_vlan_ranges = physnet1:100:600
+network_vlan_ranges = physnet1:100:299,physnet2:300:600
 
 [ml2_type_gre]
 
@@ -108,7 +108,7 @@ firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewal
 
 [ovs]
 tenant_network_type = vlan
-bridge_mappings = physnet1:br-em2
+bridge_mappings = physnet1:br-em2,physnet2:br-em3
 
 EOF
 
@@ -126,6 +126,7 @@ cat << EOF >> $netdhcp
 interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
 use_namespaces = True
+enable_isolated_metadata = True
 verbose = True
 EOF
 
@@ -157,7 +158,8 @@ ovs-vsctl add-br br-int
 ovs-vsctl add-br br-em2
 ovs-vsctl add-port br-em2 em2
 
-ovs-vsctl add-br br-ex 
+ovs-vsctl add-br br-em3
+ovs-vsctl add-port br-em3 em3
 
 echo "############  Khoi dong lai OpenvSwitch ############"
 sleep 7
@@ -165,7 +167,6 @@ sleep 7
 service neutron-server restart
 service openvswitch-switch restart
 service neutron-plugin-openvswitch-agent restart
-service neutron-l3-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
 # service neutron-lbaas-agent restart
@@ -175,7 +176,6 @@ sleep 15
 
 service openvswitch-switch restart
 service neutron-plugin-openvswitch-agent restart
-service neutron-l3-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
 # service neutron-lbaas-agent restart
@@ -186,7 +186,6 @@ sed -i "s/exit 0/# exit 0/g" /etc/rc.local
 echo "service neutron-server restart" >> /etc/rc.local
 echo "service openvswitch-switch restart" >> /etc/rc.local
 echo "service neutron-plugin-openvswitch-agent restart" >> /etc/rc.local
-echo "service neutron-l3-agent restart" >> /etc/rc.local
 echo "service neutron-dhcp-agent restart" >> /etc/rc.local
 echo "service neutron-metadata-agent restart" >> /etc/rc.local
 # echo "service neutron-lbaas-agent restart" >> /etc/rc.local

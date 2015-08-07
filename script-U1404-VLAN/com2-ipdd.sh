@@ -20,25 +20,27 @@ auto lo
 iface lo inet loopback
 
 # MGNT NETWORK
-auto eth0
-iface eth0 inet static
+auto em1
+iface em1 inet static
 address $COM2_MGNT_IP
-netmask $NETMASK_ADD
-
-
-# EXT NETWORK
-auto eth1
-iface eth1 inet static
-address $COM2_EXT_IP
 netmask $NETMASK_ADD
 gateway $GATEWAY_IP
 dns-nameservers 8.8.8.8
 
-# DATA NETWORK
-auto eth2
-iface eth2 inet static
-address $COM2_DATA_VM_IP
-netmask $NETMASK_ADD
+
+# VLANs NETWORK
+auto em2
+iface em2 inet manual
+up ifconfig \$IFACE 0.0.0.0 up
+up ip link set \$IFACE promisc on
+down ifconfig \$IFACE 0.0.0.0 down
+
+# VLAN DATA NETWORK
+auto em3
+iface em3 inet manual
+up ifconfig \$IFACE 0.0.0.0 up
+up ip link set \$IFACE promisc on
+down ifconfig \$IFACE 0.0.0.0 down
 
 EOF
 
@@ -46,8 +48,8 @@ EOF
 #service networking restart
 
 #service networking restart
-# ifdown eth0 && ifup eth0
-# ifdown eth1 && ifup eth1
+# ifdown em1 && ifup em1
+# ifdown em2 && ifup em2
 # ifdown eth2 && ifup eth2
 
 #sleep 5

@@ -34,6 +34,14 @@ iface em2 inet manual
 up ifconfig \$IFACE 0.0.0.0 up
 up ip link set \$IFACE promisc on
 down ifconfig \$IFACE 0.0.0.0 down
+
+# VLAN DATA NETWORK
+auto em3
+iface em3 inet manual
+up ifconfig \$IFACE 0.0.0.0 up
+up ip link set \$IFACE promisc on
+down ifconfig \$IFACE 0.0.0.0 down
+
 EOF
 
 #Khoi dong lai cac card mang vua dat

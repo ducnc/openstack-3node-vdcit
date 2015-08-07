@@ -230,7 +230,7 @@ mechanism_drivers = openvswitch
 [ml2_type_flat]
 
 [ml2_type_vlan]
-network_vlan_ranges = physnet1:100:600
+network_vlan_ranges = physnet1:100:299,physnet2:300:600
 
 [ml2_type_gre]
 
@@ -242,7 +242,7 @@ firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewal
 
 [ovs]
 tenant_network_type = vlan
-bridge_mappings = physnet1:br-em2
+bridge_mappings = physnet1:br-em2,physnet2:br-em3
 
 EOF
 
@@ -263,6 +263,8 @@ ovs-vsctl add-br br-int
 ovs-vsctl add-br br-em2
 ovs-vsctl add-port br-em2 em2
 
+ovs-vsctl add-br br-em3
+ovs-vsctl add-port br-em3 em3
 
 # fix loi libvirtError: internal error: no supported architecture for os type 'hvm'
 echo 'kvm_intel' >> /etc/modules
